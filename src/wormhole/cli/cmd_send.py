@@ -243,11 +243,21 @@ class Sender:
         # be unicode or bytes. We need it to be something that can be
         # os.path.joined with the unicode args.what .
         what = os.path.join(args.cwd, args.what)
-        what = what.rstrip(os.sep)
+
+        # We always tell the receiver to create a file (or directory) with the
+        # same basename as what the local user typed, even if the local object
+        # is a symlink to something with a different name. The normpath() is
+        # there to remove trailing slashes.
+        basename = os.path.basename(os.path.normpath(what))
+        assert basename != "", what # normpath shouldn't allow this
+
+        # We use realpath() instead of normpath() to locate the actual
+        # file/directory, because the path might contain symlinks, and
+        # normpath() would collapse those before resolving them.
+        what = os.path.realpath(what)
         if not os.path.exists(what):
             raise TransferError("Cannot send: no file/directory named '%s'" %
                                 args.what)
-        basename = os.path.basename(what)
 
         if os.path.isfile(what):
             # we're sending a file
