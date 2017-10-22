@@ -230,6 +230,8 @@ class OfferData(unittest.TestCase):
         # * D.txt: open A/B1/D.txt , which contains "fail"
         self.cfg.cwd = parent_dir
         self.cfg.what = os.path.join("B1", "C1", os.pardir, "D.txt")
+        print("normpath:", os.path.normpath(os.path.join(parent_dir, self.cfg.what)))
+        print("realpath:", os.path.realpath(os.path.join(parent_dir, self.cfg.what)))
         d, fd_to_send = build_offer(self.cfg)
         self.assertEqual(d["file"]["filename"], "D.txt")
         self.assertEqual(fd_to_send.read(), b"success")
