@@ -1,5 +1,6 @@
 from __future__ import print_function, absolute_import, unicode_literals
 import os
+from pprint import pprint
 from six.moves.urllib_parse import urlparse
 from attr import attrs, attrib
 from attr.validators import provides, instance_of, optional
@@ -177,6 +178,9 @@ class RendezvousConnector(object):
 
     def ws_message(self, payload):
         msg = bytes_to_dict(payload)
+        print("<<<")
+        pprint(msg)
+        print("<<<\n")
         if msg["type"] != "ack":
                 self._debug("R.rx(%s %s%s)" %
                             (msg["type"], msg.get("phase",""),
@@ -244,6 +248,9 @@ class RendezvousConnector(object):
         kwargs["id"] = bytes_to_hexstr(os.urandom(2))
         kwargs["type"] = mtype
         self._debug("R.tx(%s %s)" % (mtype.upper(), kwargs.get("phase", "")))
+        print(">>>")
+        pprint(kwargs)
+        print(">>>\n")
         payload = dict_to_bytes(kwargs)
         self._timing.add("ws_send", _side=self._side, **kwargs)
         self._ws.sendMessage(payload, False)
